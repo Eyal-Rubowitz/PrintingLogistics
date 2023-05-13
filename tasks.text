@@ -1,0 +1,4 @@
+// sepporate express biolerplate, logic and DB
+// note: express boilerplate is the settings when the app runs.
+// make sure git ignore settings files with privet data.
+// make readmeMD - inclueds what should be installed and how to run the code!
