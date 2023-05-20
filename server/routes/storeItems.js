@@ -22,7 +22,6 @@ router.get('/', async (req, res, next) => {
 });
 
 router.post('/add-item', async (req, res, next) => {
-    console.log('hello new item :)');
     const q = 
         `INSERT INTO store ` +
         `(id, title, quantity, location, customer_name, item_status, image) ` +
@@ -42,6 +41,16 @@ router.post('/add-item', async (req, res, next) => {
     connection.end();
 });
 
+router.get('/:id', async (req, res, next) => {
+    const connection = await mysql.createConnection(config.db);
+    const q = `SELECT * from store WHERE id = '${req.params.id} LIMIT 1'`;
+    await connection.query(q, (err, row, fields) => {
+        if(err) throw err;
+        res.json(row);
+    });
+    connection.end();
+});
+
 router.delete('/delete/:id', async (req, res) => {
     const id = req.params.id;
     const q = `DELETE FROM store WHERE id = ${id}`;
@@ -53,18 +62,21 @@ router.delete('/delete/:id', async (req, res) => {
     connection.end();
 })
 
+
+
 router.put('/update/:id', async (req, res) => {
     const id = req.params.id;
     const item = req.body;
     const q = "UPDATE store SET " + 
-               `'title' = ${item.title}, ` + 
-               `'quantity' = ${item.quantity} ,` + 
-               `'location' = ${item.location}, ` +
-               `'customer_name' = ${item.customer_name}, ` + 
-               `'item_status' = ${item.item_status}, ` + 
-               `'image' = ${item.image} ` + 
-               `WHERE id = ${id}`;
+               `title = '${item.title}', ` + 
+               `quantity = '${item.quantity}', ` + 
+               `location = '${item.location}', ` +
+               `customer_name = '${item.customer_name}', ` + 
+               `item_status = '${item.item_status}', ` + 
+               `image = '${item.image}' ` + 
+               `WHERE id = '${id}'`;
     const connection = await mysql.createConnection(config.db);
+    console.log('qqqqqqqqqqq: ', q)
     await connection.query(q, async (err, data) => {
         if(err) throw err;
         await res.json(`Item has being ${q}`);

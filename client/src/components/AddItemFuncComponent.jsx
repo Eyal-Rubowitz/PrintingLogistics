@@ -60,7 +60,7 @@ const AddItemFuncComp = () => {
     }
 
     return (
-        <div style={{display: 'flex'}}>
+        <div class="flex">
             <form>
                 <label> Item name: &nbsp;
                     <input type="text" placeholder="item name" name="title" onChange={handleChange} value={item.title}></input>
@@ -81,7 +81,7 @@ const AddItemFuncComp = () => {
                     <input type="image" alt="" name="image" onChange={handleChange} value={item.image}></input>
                 </label>
                 <div>
-                    <button style={{fontSize: "1.6rem"}} onClick={handleClick}>Add Item</button>
+                    <button class="text-base" onClick={handleClick}>Add Item</button>
                 </div>
             </form>
         </div>
