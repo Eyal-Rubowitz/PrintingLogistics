@@ -8,7 +8,6 @@ const UpdateItemFuncComp = () => {
     
     useEffect(() => {
         const url = `http://localhost:9000/database/${id}`;
-        console.log('an effect happened!')
         const fetchData = async () => {
             try {
                 const response = await fetch(url);
