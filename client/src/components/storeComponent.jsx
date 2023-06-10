@@ -9,7 +9,7 @@ const StoreListFuncComp = () => {
     const [locationFilter, setLocationFilter ] = useState([]);
     const [customerFilter, setCustomerFilter ] = useState([]);
     const [statusFilter, setStatusFilter ] = useState([]);
-    const [filters, setFilters] = useState({title: "Show All", location: "Show All", customer: "Show All", status: "Show All"});
+    const [filters, setFilters] = useState({"title": "Show All", "location": "Show All", "customer": "Show All", "status": "Show All"});
     
     useEffect(() => {
         const url = "http://localhost:9000/database";
@@ -17,23 +17,23 @@ const StoreListFuncComp = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(url);
-                const json = await response.json()
+                const json = await response.json();
         if(filters['title'] !== "Show All" && 
            filters['location'] !== "Show All" && 
            filters['customer'] !== "Show All" && 
            filters['status'] !== "Show All") {
-               console.log('Hello Filter!');
+            //    console.log('Hello Filter!');
                const filteredList = json
-               console.log('filters["title"] === "Show All": ',filters['title']);
-               if(filters['title'] === "Show All") console.log('CLG ["title"] === "Show All"');
+            //    console.log('filters["title"] === "Show All": ',filters['title']);
+            //    if(filters['title'] === "Show All") console.log('CLG ["title"] === "Show All"');
 
                 if(filters['title'] !== "Show All") filteredList.filter(item => item.title === filters['title'])
-                if(filters['location'] !== "Show All") console.log('CLG ["location"] !== "Show All"');
-                if(filters['location'] !== "Show All") filteredList.filter(item => item.location === filters['location'])
-                if(filters['customer'] !== "Show All") filteredList.filter(item => item.customer_name === filters['customer'])
-                if(filters['status'] !== "Show All") filteredList.filter(item => item.item_status === filters['status']);
-                    console.log("filteredList: ", filteredList);
-                       setItemList(filteredList);                   
+            //     if(filters['location'] !== "Show All") console.log('CLG ["location"] !== "Show All"');
+            //     if(filters['location'] !== "Show All") filteredList.filter(item => item.location === filters['location'])
+            //     if(filters['customer'] !== "Show All") filteredList.filter(item => item.customer_name === filters['customer'])
+            //     if(filters['status'] !== "Show All") filteredList.filter(item => item.item_status === filters['status']);
+            //         console.log("filteredList: ", filteredList);
+            //            setItemList(filteredList);                   
                 } else {
                     setItemList(json);
                     const nameList = ["Show All", ...Array.from(new Set(json.map((item) => item.title)))];
@@ -50,9 +50,8 @@ const StoreListFuncComp = () => {
                 }; 
         }
         fetchData();
-    // }
     },[filters]);
-   // setItemNameFilter, setLocationFilter, setCustomerFilter, setStatusFilter
+
     const onDelete = async (idItemToDelete) => {
             await fetch("http://localhost:9000/database/delete/"+idItemToDelete, { method: "DELETE" });  
             const reList = itemList.filter(item => item.id !== idItemToDelete);
@@ -60,13 +59,14 @@ const StoreListFuncComp = () => {
     }
     
     const onFilterItemList = (e) => {
-        const filtersChange = filters[`${e.target.name}`] = e.target.value;
-        console.log("filtersChange: ", filtersChange);
-        // setFilters(filtersChange);
+        console.log("Go and filter!");
+        const filtersChange = filters;
+        filtersChange[e.target.name] = e.target.value;
+        console.log("setFilters: ", filtersChange);
+        setFilters(filtersChange);
     }
   
         return  (
-            
             <div class="bg-gray-400 max-w-full rounded-2xl m-9 w-11/12 z-1">
                 <div id="filter-selection-container" >
                     <form class="bg-gray-400 max-w-full fixed top-0 rounded-2xl w-11/12">

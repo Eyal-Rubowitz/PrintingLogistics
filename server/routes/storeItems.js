@@ -21,10 +21,15 @@ router.get('/', async (req, res, next) => {
     connection.end();
 });
 
+router.get('/image-upload-key', async (req, res, next) => {
+    res.json({key: config.imageUploadKey});
+});
+
 router.post('/add-item', async (req, res, next) => {
+    console.log("Add new item in progress");
     const q = 
         `INSERT INTO store ` +
-        `(id, title, quantity, location, customer_name, item_status, image) ` +
+        `(id, title, quantity, location, customer_name, item_status, image_src) ` +
         `VALUES (` + 
         `'${uuidv4()}', ` +
         `'${req.body.title}', ` + 
@@ -32,7 +37,8 @@ router.post('/add-item', async (req, res, next) => {
         `'${req.body.location}', ` +
         `'${req.body.customer_name}', ` +
         `'${req.body.item_status}', ` + 
-        `'${req.body.image}')`;
+        `'${req.body.image_src}')`;
+    console.log("fetch query: ", q);
     const connection = await mysql.createConnection(config.db);
     await connection.query(q, async (err, data) => {
         if(err) throw err;
@@ -73,7 +79,7 @@ router.put('/update/:id', async (req, res) => {
                `location = '${item.location}', ` +
                `customer_name = '${item.customer_name}', ` + 
                `item_status = '${item.item_status}', ` + 
-               `image = '${item.image}' ` + 
+               `image_src = '${item.image_src}' ` + 
                `WHERE id = '${id}'`;
     const connection = await mysql.createConnection(config.db);
     console.log('qqqqqqqqqqq: ', q)

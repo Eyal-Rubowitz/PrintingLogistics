@@ -1,44 +1,35 @@
 import { useState } from 'react';
+import { FileUploader } from "react-drag-drop-files";
+import logo from '../logo.svg';
+import UploadImage from '../utils/UploadImage';
+import { fileTypes } from '../utils/ImageFileTypes';
+import { defaultVal } from '../utils/DefaultItemVal';
 
 const AddItemFuncComp = () => {
-
-    const defaultVal = {
-            title: "",
-            quantity: null,
-            location: "",
-            customer_name: "",
-            item_status: "",
-            image: ""
-        }
    
-
-    const [item, setItem] = useState({
-        title: "",
-        quantity: null,
-        location: "",
-        customer_name: "",
-        item_status: "",
-        image: ""
-    });
-
+    const [item, setItem] = useState(defaultVal);
+     
     const handleChange = (e) => {
-        setItem(prev => ({...prev, [e.target.name]: e.target.value}))
-        console.log("item: ", item);
+            setItem(prev => ({...prev, [e.target.name]: e.target.value}));
     }
+
+    const handleImage = async (e) => {
+        const imgUrl = await UploadImage(e);
+        if (e instanceof File) {
+            setItem({...item, image_src: imgUrl});
+        } 
+    }
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }
 
     const handleClick = async (e) => {
         e.preventDefault();
-        const jsonBody = {
-            title: item.title,
-            quantity: item.quantity,
-            location: item.location,
-            customer_name: item.customer_name,
-            item_status: item.item_status,
-            image: item.image
-        }
+        const jsonBody = item;
         try {
             if (item.title !== "" && 
-                item.quantity != null && 
                 item.quantity !== 0 && 
                 item.location !== "" && 
                 item.customer_name && 
@@ -49,41 +40,52 @@ const AddItemFuncComp = () => {
                     headers: {
                         "Content-type": "application/json; charset=UTF-8"
                     }})
-                    await setItem(defaultVal);
                     alert("Item Added Successfully!")
+                    setItem(defaultVal);
                     const data = response.json();
                     return data;
                 }
-                } catch (err) {
+            } catch (err) {
             throw err;
         }
     }
 
     return (
-        <div class="flex">
-            <form>
-                <label> Item name: &nbsp;
-                    <input type="text" placeholder="item name" name="title" onChange={handleChange} value={item.title}></input>
-                </label>
-                <label> Quantity: &nbsp;
-                    <input type="number" placeholder="quantity" name="quantity" onChange={handleChange} value={item.quantity}></input>
-                </label>
-                <label> Goods Location: &nbsp;
-                    <input type="text" placeholder="location" name="location" onChange={handleChange} value={item.location}></input>
-                </label>
-                <label> Customer Name: &nbsp;
-                    <input type="text" placeholder="customer name"  name="customer_name" onChange={handleChange} value={item.customer_name}></input>
-                </label>
-                <label> Item Status: &nbsp; 
-                    <input type="text" placeholder="item status" name="item_status" onChange={handleChange} value={item.item_status}></input>
-                </label>
-                <label> Image:
-                    <input type="image" alt="" name="image" onChange={handleChange} value={item.image}></input>
-                </label>
-                <div>
-                    <button class="text-base" onClick={handleClick}>Add Item</button>
+        <div class="bg-stone-300 border border-stone-600 mt-16 ml-2 mr-2 p-2 rounded-xl h-96 flex" onChange={handleDragOver}>
+                <div class="mt-2 mb-2"> 
+                    <label> Item name: &nbsp;
+                        <input type="text" placeholder="item name" name="title" onChange={handleChange} value={item.title}></input>
+                    </label>
                 </div>
-            </form>
+                <div class="mb-2">
+                    <label> Quantity: &nbsp;
+                        <input type="number" placeholder="quantity" name="quantity" onChange={handleChange} value={item.quantity}></input>
+                    </label>
+                </div>
+                <div class="mb-2">
+                    <label> Goods Location: &nbsp;
+                        <input type="text" placeholder="location" name="location" onChange={handleChange} value={item.location}></input>
+                    </label>
+                </div>
+                <div class="mb-2">
+                    <label> Customer Name: &nbsp;
+                        <input type="text" placeholder="customer name"  name="customer_name" onChange={handleChange} value={item.customer_name}></input>
+                    </label>
+                </div>
+                <div class="mb-2">
+                    <label> Item Status: &nbsp; 
+                        <input type="text" placeholder="item status" name="item_status" onChange={handleChange} value={item.item_status}></input>
+                    </label>
+                </div>
+                <div class="bg-red-500 auto w-3/12">
+                    <label> Image:
+                        <FileUploader handleChange={handleImage} name="image_src" types={fileTypes} />
+                        <img class="object-contain h-4/5 w-96" src={item.image_src || logo} alt=""/>
+                    </label>
+                </div>
+                <div>
+                    <button class="text-2xl p-1 mt-9 bg-amber-600 rounded-lg w-48 ml-4" onClick={handleClick}>Add Item</button>
+                </div>
         </div>
     )
 }
