@@ -1,10 +1,3 @@
-//1. Parsing & validating the payload of incomeing request sent by the client 
-//   in order to strip htem away from HTTP-specific properties.
-//2. Forwarding the parsed data to the Service Layer for handling
-//   the buisness logic of the app.
-//3. Translation the result of the call made to the Service Layer
-//   into a valid HTTP response before sending it back to the client.
-
 const express = require('express');
 const mysql = require('mysql');
 const config = require('../config');
@@ -21,12 +14,23 @@ router.get('/', async (req, res, next) => {
     connection.end();
 });
 
+router.get('/filter-search/:filter/:arg', async (req, res, next) => {
+    const filter_query = await req.params.filter;
+    const search_query = await req.params.arg;
+    const connection = await mysql.createConnection(config.db);
+    const q = `select * from store WHERE ${filter_query} LIKE "%${search_query}%"`;
+    await connection.query(q, (err, rows, fields) => {
+        if(err) throw err;
+        res.json(rows);
+    });
+    connection.end();
+});
+
 router.get('/image-upload-key', async (req, res, next) => {
     res.json({key: config.imageUploadKey});
 });
 
 router.post('/add-item', async (req, res, next) => {
-    console.log("Add new item in progress");
     const q = 
         `INSERT INTO store ` +
         `(id, title, quantity, location, customer_name, item_status, image_src) ` +
@@ -38,7 +42,6 @@ router.post('/add-item', async (req, res, next) => {
         `'${req.body.customer_name}', ` +
         `'${req.body.item_status}', ` + 
         `'${req.body.image_src}')`;
-    console.log("fetch query: ", q);
     const connection = await mysql.createConnection(config.db);
     await connection.query(q, async (err, data) => {
         if(err) throw err;
@@ -82,7 +85,6 @@ router.put('/update/:id', async (req, res) => {
                `image_src = '${item.image_src}' ` + 
                `WHERE id = '${id}'`;
     const connection = await mysql.createConnection(config.db);
-    console.log('qqqqqqqqqqq: ', q)
     await connection.query(q, async (err, data) => {
         if(err) throw err;
         await res.json(`Item has being ${q}`);

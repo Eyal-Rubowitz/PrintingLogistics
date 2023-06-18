@@ -85,15 +85,14 @@ const UpdateItemFuncComp = () => {
                 </div>
                 <div class="bg-red-400 auto w-3/12">
                     <label> Image:
-                        <FileUploader handleChange={handleImage} name="image" types={fileTypes} />
+                        <FileUploader handleChange={handleImage} name="image_src" types={fileTypes} />
                         <img class="object-contain h-4/5 w-96" src={updatedItem.image_src || logo} alt=""/>
                     </label>
                 </div>
                 <div>
                     <button class="text-2xl p-1 mt-9 bg-amber-600 rounded-lg w-48 ml-4" onClick={() => onUpdate()}>Update Item</button>
                 </div>
-        </div>
-        
+        </div>  
         )
     }
     
